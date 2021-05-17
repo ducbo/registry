@@ -1,0 +1,31 @@
+# Zenaida Gate systemd service configuration.
+#
+# Copy and modify `zenaida-gate.service` file to your local systemd folder to enable the service:
+#
+#         mkdir -p /home/zenaida/.config/systemd/user/
+#         cd /home/zenaida/zenaida/
+#         cp etc/systemd/system/zenaida-gate.service.example /home/zenaida/.config/systemd/user/zenaida-gate.service
+#         systemctl --user enable zenaida-gate.service
+#
+#
+# To start Zenaida Gate service run this command:
+# 
+#         systemctl --user start zenaida-gate.service
+#
+#
+# You can always check current situation with:
+#
+#         systemctl --user status zenaida-gate.service 
+#
+
+[Unit]
+Description=ZenaidaGate
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/zenaida/zenaida/
+ExecStart=/home/zenaida/zenaida/venv/bin/epp-gate --verbose --reconnect --epp=/home/zenaida/keys/epp_credentials.txt --rabbitmq=/home/zenaida/keys/rabbitmq_gate_credentials.txt --queue=epp_rpc_messages 1>>/home/zenaida/logs/gate 2>>/home/zenaida/logs/gate
+
+[Install]
+WantedBy=multi-user.target
