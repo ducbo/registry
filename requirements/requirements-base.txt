@@ -1,0 +1,26 @@
+# Base requirements
+pkgversion
+pika
+transliterate
+fqn-decorators
+requests
+psycopg2-binary
+uwsgi
+Django
+django-admin-ip-restrictor
+djangorestframework
+python-memcached
+django-bootstrap4
+django-nested-admin
+django-grappelli
+django-extensions
+django_otp
+django-formtools
+django-dbbackup
+qrcode
+pdfkit
+btcpay-python
+python-dateutil
+lxml
+beautifulsoup4
+https://github.com/datahaven-net/epp-python-client/archive/master.zip

@@ -1,0 +1,30 @@
+{% extends 'base/container_sm_4.html' %}
+
+{% block content %}
+
+{% load static %}
+
+
+<div class="text-center">
+  <img src="{% static 'images/mastercard.png' %}"  width="30%" height="30%" alt="mastercard logo">
+  <img src="{% static 'images/bitcoin.png' %}"  width="25%" height="25%" alt="bitcoin logo">
+  <img src="{% static 'images/visa.png' %}"  width="30%" height="30%" alt="visa card logo">
+</div>
+
+<br />
+Your current balance is <b>${{ user.balance }} US</b>
+<br />
+<br />
+
+<form method="post">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  <button class="btn btn-success">Next</button>
+</form>
+
+<br />
+* Note that your card will be charged ${{ credit_card_payment_price }} for a credit of
+${{ credit_card_payment_base_price }} in your account when you pay with a <b>credit card.</b>
+
+
+{% endblock %}

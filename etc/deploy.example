@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Ready-to-use script to deploy latest changes to Zenaida Live machine
+
+# fetch latest changes from repo
+cd /home/zenaida/zenaida/
+git pull
+
+# rebuild virtual environment, in case requirements.txt changed
+make venv
+
+# apply Django migrations
+make migrate
+
+# update FAQ pages on the web-site
+cp -r /home/zenaida/static_html/*.html /home/zenaida/zenaida/src/front/templates/faq/
+
+# update Billling templates (e,g: receipt PDF)
+cp -r /home/zenaida/static_html/billing/*.html /home/zenaida/zenaida/src/billing/templates/billing/
+
+# restart Zenaida UWSGI application
+touch /home/zenaida/zenaida/etc/uwsgi/vassals/zenaida.ini
+
+# restart Zenaida Gate service
+systemctl --user restart zenaida-gate.service
+
+# restart Zenaida Poll service
+systemctl --user restart zenaida-poll.service
+
+# restart Zenaida Gate Watcher service
+systemctl --user restart zenaida-gate-watcher.service
+
+# restart Zenaida Gate Health file trigger
+systemctl --user restart zenaida-gate-health.path
+
+# restart BTCPay background service
+systemctl --user restart zenaida-btcpay.service
+
+# restart Zenaida background worker service
+systemctl --user restart zenaida-background-worker.service
+
+# restart Zenaida notifications queue service
+systemctl --user restart zenaida-notifications.service
+
+
+# DONE!
+exit 0

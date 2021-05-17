@@ -1,0 +1,18 @@
+{% extends 'base/container_sm_8.html' %}
+
+{% block content %}
+
+
+<div class="text-center">
+  You will be paying <b>${{amount}} US</b> as bitcoins.<br />
+  Payment gateway automatically calculates bitcoin price according to market exchange rate.<br />
+  Be aware that, payment process may take a few minutes.
+  <form action="{% url 'billing_btcpay_process_payment' transaction_id%}" method="post" class="mt-3">
+    {% csrf_token %}
+    <input type="hidden" name="amount" value="{{amount}}" />
+    <button class="btn btn-success">Next</button>
+  </form>
+</div>
+
+
+{% endblock %}

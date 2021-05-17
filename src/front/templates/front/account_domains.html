@@ -1,0 +1,84 @@
+{% extends 'base/index.html' %}
+
+{% load front_filters %}
+
+{% block main_content %}
+
+
+{% if not object_list %}
+
+    <div class="alert alert-success text-center" role="alert">
+        Welcome! Feel free to register your first domain.
+    </div>
+    <div class="text-center">
+        <form action="{% url 'domain_lookup' %}" method="post">
+            {% csrf_token %}
+            <div class="form-row justify-content-center">
+                <div class="col-lg-3">
+                    <input class="form-control form-control-lg" type="text" placeholder="example.cu.al" aria-label="Search" name="domain_name" value="{{ domain_name }}" autofocus required>
+                </div>
+                <div class="col-lg-1">
+                    <button class="btn btn-success btn-lg btn-block" type="submit">Register</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% else %}
+
+    <form action="{% url 'billing_order_create' %}" method="post">
+    {% csrf_token %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <tr>
+                <th>Domain Name</th>
+                <th>Status</th>
+                <th>Expiry Date</th>
+                <th>Creation Date</th>
+                <th>Actions</th>
+            </tr>
+
+            {% for domain in object_list %}
+
+                <tr>
+                    <td>
+                        <a href='{% url "account_domain_edit" domain.id %}' role="button"><b>{{ domain.name }}</b></a>
+                    </td>
+                    <td>{{ domain.get_status_display }}</td>
+                    <td>
+                        {% if domain.expiry_datetime_as_date <= 0|add_days %}
+                            <div class="text-danger">{{ domain.expiry_date|date:'d N Y' }}</div>
+                        {% elif 14|add_days > domain.expiry_datetime_as_date %}
+                            <div class="text-warning">{{ domain.expiry_date|date:'d N Y' }}</div>
+                        {% else %}
+                            <div class="text-success">{{ domain.expiry_date|date:'d N Y' }}</div>
+                        {% endif %}
+                    </td>
+                    <td>{{ domain.create_date|date:'d N Y' }}</td>
+                    <td>
+                        {% if domain.is_blocked %}
+                            <p>contact site administrator</p>
+                        {% elif not domain.is_registered %}
+                            <a class="btn btn-sm btn-success" href="{% url 'billing_order_register' domain.name %}" role="button">Register</a>
+                        {% elif domain.can_be_restored  %}
+                            <a class="btn btn-sm btn-warning" href="{% url 'billing_order_restore' domain.name %}" role="button">Restore</a>
+                        {% elif 14|add_days > domain.expiry_datetime_as_date  %}
+                            <a class="btn btn-sm btn-primary" href="{% url 'billing_order_renew' domain.name %}" role="button">Renew</a>
+                        {% else %}
+                            <p>No</p>
+                        {% endif %}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+    </div>
+    </form>
+
+{% endif %}
+
+
+{% include 'base/pagination_class_based_views.html' %}
+
+{% endblock %}
